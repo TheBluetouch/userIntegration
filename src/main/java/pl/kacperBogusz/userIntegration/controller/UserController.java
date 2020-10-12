@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.kacperBogusz.userIntegration.model.User;
+import pl.kacperBogusz.userIntegration.model.userWithCar;
 import pl.kacperBogusz.userIntegration.request.AddUserRequest;
 import pl.kacperBogusz.userIntegration.service.UserService;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
+
     private UserService service;
 
     public UserController(UserService userService) {
@@ -38,6 +40,13 @@ public class UserController {
 
         User user = service.findUserById(id);
         return user;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<userWithCar> userWithCars(@PathVariable Long id){
+
+        userWithCar userWithCar = service.connectUserWithCarsById(id);
+        return ResponseEntity.ok(userWithCar);
     }
 
 

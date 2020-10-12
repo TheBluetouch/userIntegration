@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.kacperBogusz.userIntegration.model.User;
+import pl.kacperBogusz.userIntegration.model.userWithCar;
 import pl.kacperBogusz.userIntegration.repository.UserRepository;
 import pl.kacperBogusz.userIntegration.request.AddUserRequest;
 import pl.kacperBogusz.userIntegration.view.CarView;
-import pl.kacperBogusz.userIntegration.view.UserView;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User addUserRequest(AddUserRequest request){
+    public User addUserRequest(AddUserRequest request) {
 
         User user = User.builder()
                 .name(request.getName())
@@ -34,15 +34,26 @@ public class UserService {
 
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User findUserById( Long userId){
+    public User findUserById(Long userId) {
         return userRepository.findUserByUserId(userId);
-
     }
-//    private CarView getCarFromExternalService(Long carId) {
-//        return restTemplate.getForObject(CARS_URL + carId, CarView.class);
-//    }
+
+    public userWithCar connectUserWithCarsById(Long id) {
+        List<CarView> response = restTemplate.getForObject
+                (CARS_URL + "/external/" + id, List.class);
+
+        User user = userRepository.findUserByUserId(id);
+
+        userWithCar userWithCars = userWithCar.builder()
+                .name(user.getName())
+                .surname(user.getSurname())
+                .age(user.getAge())
+                .cars(response)
+                .build();
+        return userWithCars;
+    }
 }
